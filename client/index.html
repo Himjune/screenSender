@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>HTML5</title>
+    <!--[if IE]>
+   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+    <style>
+        article,
+        aside,
+        details,
+        figcaption,
+        figure,
+        footer,
+        header,
+        hgroup,
+        menu,
+        nav,
+        section {
+            display: block;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <button onclick="reset_con();">RESET</button>
+
+    <p id="statsGen">MSG #<span class="tick"></span> ! ServerTS: <span class="servts"></span> (lat: <span class="lat"></span> lat_avg: <span class="alat"></span>) Прошло с предыдущего <span class="d"></span> (avg: <span class="ad"></span>)</p>
+    
+    <p id="saveGen">MSG #<span class="tick"></span> ! ServerTS: <span class="servts"></span> (lat: <span class="lat"></span> lat_avg: <span class="alat"></span>) Прошло с предыдущего <span class="d"></span> (avg: <span class="ad"></span>)</p>
+    <table id border="1">
+        <tr id="labelsLine">
+        </tr>
+        <tr id="statsLine">
+        </tr>
+        <tr id="stableLine">
+        </tr>
+    </table>
+    
+    <img id="ItemPreview" src="">
+</body>
+
+</html>
