@@ -44,7 +44,7 @@ class wsServer():
         tser.ts('on ws to_client')
         #asyncio.ensure_future(self.update_clients(msg), loop=self.loop)
         future = asyncio.run_coroutine_threadsafe(self.update_clients(msg, tser), loop=self.loop)
-        try:
+        '''try:
             result = future.result(3)
         except asyncio.TimeoutError:
             print(self.port, 'to_clients timeout')
@@ -53,7 +53,7 @@ class wsServer():
             print(self.port, f'coroutine exception: {exc!r}')
         else:
             #print(f'The coroutine returned: {result!r}')
-            pass
+            pass'''
 
 
     def __init__(self,port):
@@ -91,14 +91,4 @@ class serverController():
         tser.ts('go_schedule')
 
         for i in range(len(self.servers)):
-            future = asyncio.run_coroutine_threadsafe(self.servers[i].update_clients(msg, tser), loop=self.servers[i].loop)
-            try:
-                result = future.result(3)
-            except asyncio.TimeoutError:
-                print(self.servers[i].port, 'schedule to_clients timeout')
-                future.cancel()
-            except Exception as exc:
-                print(self.servers[i].port, f'schedule coroutine exception: {exc!r}')
-            else:
-                #print(f'The coroutine returned: {result!r}')
-                pass
+            asyncio.run_coroutine_threadsafe(self.servers[i].update_clients(msg, tser), loop=self.servers[i].loop)
