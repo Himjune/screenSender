@@ -61,7 +61,7 @@ class ScreenCapturer:
 
 if __name__ == "__main__":
     scp = ScreenCapturer()
-    server = serverController(3)
+    server = serverController(20)
 
     screenThread = threading.Thread(target=scp.update, args=(server,))
     screenThread.start()
