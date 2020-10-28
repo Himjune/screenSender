@@ -35,7 +35,7 @@ class ScreenCapturer:
             self.tser.ts('got_img')
 
             data = io.BytesIO()
-            self.buffers[self.writeTo].save(data, 'JPEG', quality=70)
+            self.buffers[self.writeTo].save(data, 'JPEG', quality=90)
             data.seek(0)
             self.tser.ts('got_img_to_buf')
 
