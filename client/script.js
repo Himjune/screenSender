@@ -13,15 +13,18 @@ function ws_onopen (e) {
 var statsFields = []
 
 function reset_con() {
+    let port = document.getElementById('inpPort');
+    console.log(port);
+    port = port.value;
     if (socket) socket.close();
-    socket = new WebSocket("ws://192.168.1.2:8765");
+    socket = new WebSocket("ws://192.168.1.2:"+port);
 
     socket.onopen = ws_onopen;
     socket.onmessage = ws_onmessage;
     socket.onclose = ws_onclose;
     socket.onerror = ws_onerror;
 }
-reset_con();
+//reset_con();
 
 const treshold = 100
 function ws_onmessage (event) {

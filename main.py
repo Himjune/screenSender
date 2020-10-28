@@ -16,7 +16,7 @@ from PIL import Image
 import PIL.ImageGrab
 
 from ts_collector import TsCollector
-from server import wsServer
+from server import wsServer, serverController
 
 class ScreenCapturer:
     def __init__(self):
@@ -31,23 +31,11 @@ class ScreenCapturer:
     def update(self, sender):
         while(self.working):
             self.tser.start()
-            img = {}
-            #self.buffers[self.writeTo] = pyautogui.screenshot()
-            #img = pyautogui.screenshot()
-            img = PIL.ImageGrab.grab()
-            '''with mss.mss() as sct:
-                # Get rid of the first, as it represents the "All in One" monitor:
-                for num, monitor in enumerate(sct.monitors[1:], 1):
-                    # Get raw pixels from the screen
-                    sct_img = sct.grab(monitor)
-
-                    # Create the Image
-                    img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")'''
+            self.buffers[self.writeTo] = pyautogui.screenshot()
             self.tser.ts('got_img')
 
             data = io.BytesIO()
-            #self.buffers[self.writeTo].save(data, 'JPEG', quality=70)
-            img.save(data, 'JPEG', quality=10)
+            self.buffers[self.writeTo].save(data, 'JPEG', quality=70)
             data.seek(0)
             self.tser.ts('got_img_to_buf')
 
@@ -73,9 +61,9 @@ class ScreenCapturer:
 
 if __name__ == "__main__":
     scp = ScreenCapturer()
-    servers = [wsServer(14001), wsServer(14002), wsServer(14003)]
+    server = serverController(3)
 
-    screenThread = threading.Thread(target=scp.update, args=(servers[0],))
+    screenThread = threading.Thread(target=scp.update, args=(server,))
     screenThread.start()
 
     working = True

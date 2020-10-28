@@ -36,17 +36,21 @@ class wsServer():
             return 1
 
 
+    #TODO can try queues for sennnding
+    async def to_clients(self, msg, tser):
+        if (not self.clients): return 0
 
-    def to_clients(self, msg, tser):
+        
+        tser.ts('on ws to_client')
         #asyncio.ensure_future(self.update_clients(msg), loop=self.loop)
         future = asyncio.run_coroutine_threadsafe(self.update_clients(msg, tser), loop=self.loop)
         try:
             result = future.result(3)
         except asyncio.TimeoutError:
-            print('The coroutine took too long, cancelling the task...')
+            print(self.port, 'to_clients timeout')
             future.cancel()
         except Exception as exc:
-            print(f'The coroutine raised an exception: {exc!r}')
+            print(self.port, f'coroutine exception: {exc!r}')
         else:
             #print(f'The coroutine returned: {result!r}')
             pass
@@ -57,12 +61,12 @@ class wsServer():
         self.clients = set()
         self.cnt = 0
         self.port = port
+
+        self.loop = asyncio.new_event_loop()
         self.last_send = math.floor(time.time()*1000)
 
         self.thread = threading.Thread(target=self.listen)
         self.thread.start()
-
-        self.loop = asyncio.new_event_loop()
 
         
 
@@ -72,5 +76,29 @@ class wsServer():
         
         self.loop.run_until_complete(start_server)
 
+        print(self.port, 'listeningg')
         self.last_send = math.floor(time.time()*1000)
         self.loop.run_forever()
+
+class serverController():
+    BASE_PORT = 14000
+    def __init__(self, workers):
+        self.servers = [] 
+        for i in range(workers):
+            self.servers.append(wsServer(self.BASE_PORT+1+i))
+
+    def to_clients(self, msg, tser):
+        tser.ts('go_schedule')
+
+        for i in range(len(self.servers)):
+            future = asyncio.run_coroutine_threadsafe(self.servers[i].update_clients(msg, tser), loop=self.servers[i].loop)
+            try:
+                result = future.result(3)
+            except asyncio.TimeoutError:
+                print(self.servers[i].port, 'schedule to_clients timeout')
+                future.cancel()
+            except Exception as exc:
+                print(self.servers[i].port, f'schedule coroutine exception: {exc!r}')
+            else:
+                #print(f'The coroutine returned: {result!r}')
+                pass
