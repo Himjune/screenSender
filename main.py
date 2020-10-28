@@ -36,6 +36,7 @@ class worker():
         self.thread.start()
     
     def start(self):
+        asyncio.set_event_loop(self.loop)
         self.loop.run_until_complete(self.process())
         self.loop.run_forever()
 
@@ -66,16 +67,15 @@ class worker():
 
     async def process(self):
         #May be shoulld start thread's loop here
-        asyncio.set_event_loop(self.loop)
 
-        while True:
-            msg = self.queue.get()
-            
-            if self.clients:     
-                packet = json.dumps({"ts": math.floor(time.time()*1000), "ws_msg": msg})       
-                await asyncio.wait([client.send(packet) for client in self.clients], return_when=asyncio.FIRST_COMPLETED)
+        msg = self.queue.get()
+        
+        if self.clients:     
+            packet = json.dumps({"ts": math.floor(time.time()*1000), "ws_msg": msg})       
+            print('packet ready to send')
+            await asyncio.wait([client.send(packet) for client in self.clients], return_when=asyncio.FIRST_COMPLETED)
 
-            self.queue.task_done()
+        self.queue.task_done()
 
 
 class wsServer():
