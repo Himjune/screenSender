@@ -73,13 +73,10 @@ class ScreenCapturer:
 
 if __name__ == "__main__":
     scp = ScreenCapturer()
-    server = wsServer()
+    servers = [wsServer(14001), wsServer(14002), wsServer(14003)]
 
-    screenThread = threading.Thread(target=scp.update, args=(server,))
+    screenThread = threading.Thread(target=scp.update, args=(servers[0],))
     screenThread.start()
-
-    serverThread = threading.Thread(target=server.listen)
-    serverThread.start()
 
     working = True
     try:

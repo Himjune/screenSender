@@ -1,4 +1,6 @@
 import math, json, base64, time
+
+import threading
 import asyncio, websockets
 
 class wsServer():
@@ -50,16 +52,25 @@ class wsServer():
             pass
 
 
-    def __init__(self):
+    def __init__(self,port):
         self.working = True
         self.clients = set()
         self.cnt = 0
-        self.loop = asyncio.new_event_loop()
+        self.port = port
         self.last_send = math.floor(time.time()*1000)
+
+        self.thread = threading.Thread(target=self.listen)
+        self.thread.start()
+
+        self.loop = asyncio.new_event_loop()
+
+        
 
     def listen(self):
         asyncio.set_event_loop(self.loop)
-        start_server = websockets.serve(self.handle, port=8765)
+        start_server = websockets.serve(self.handle, port=self.port)
         
         self.loop.run_until_complete(start_server)
+
+        self.last_send = math.floor(time.time()*1000)
         self.loop.run_forever()
