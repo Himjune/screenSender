@@ -13,6 +13,12 @@ function ws_onopen (e) {
 var statsFields = []
 
 function reset_con() {
+    let now = new Date()
+    last_ts = Math.round(now.getTime())
+    n = 0
+    avg = 0
+    avg_lat = 0
+
     let port = document.getElementById('inpPort');
     console.log(port);
     port = port.value;
