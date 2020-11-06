@@ -22,6 +22,7 @@ import tornado.ioloop
 import tornado.web
 
 import hashlib
+import os
 
 class ScreenCapturer:
     def __init__(self):
@@ -96,10 +97,15 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_status(204)
         self.finish()
 
+settings = {
+    "static_path": os.path.join(os.path.dirname(__file__), "client"),
+    "cookie_secret": "Ненависть измеряется силой того отвращения, с которым ты помнишь свои обещания",
+    "xsrf_cookies": True,
+}
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
-    ])
+    ], **settings)
 
 if __name__ == "__main__":
     screenThread = threading.Thread(target=scp.update)
